@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
-    public static LevelManager Instance { get; private set; }
-
+    public static LevelManager Instance {  get; private set; }
+    
     private void Awake()
     {
         if (Instance == null)
@@ -21,7 +21,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void LoadScene(Scene targetScene)
+    public void LoadScene(Scenes targetScene)
     {
         SceneManager.LoadScene(targetScene.ToString());
     }
