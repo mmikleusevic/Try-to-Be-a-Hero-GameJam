@@ -1,17 +1,20 @@
 using System;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private Vector3 jumpForce;
+    [SerializeField] private TextMeshProUGUI useText;
     
     private Rigidbody playerRigidbody;
     public Transform groundCheckOrigin;
     
     private Vector3 direction;
     public LayerMask groundLayer;
+    private IUseable currentUseableObject;
     public float sphereRadius = 0.4f;
     public float checkDistance = 0.2f;
     
@@ -55,6 +58,11 @@ public class PlayerMovement : MonoBehaviour
         {
             speed /= 2;
         }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Use();
+        }
     }
 
     private void Move()
@@ -73,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
     private bool IsGrounded()
     {
         return Physics.SphereCast(
-            groundCheckOrigin.position,
+            groundCheckOrigin.position + new Vector3(0, 0.75f, 0),
             sphereRadius,
             Vector3.down,
             out RaycastHit hit,
@@ -81,5 +89,23 @@ public class PlayerMovement : MonoBehaviour
             groundLayer,
             QueryTriggerInteraction.Ignore
         );
+    }
+    
+    public void SetUseableObject(IUseable useableObject, string text)
+    {
+        ToggleCanvas(useableObject != null, text);
+        currentUseableObject = useableObject;
+    }
+
+    private void ToggleCanvas(bool value, string text)
+    {
+        useText.gameObject.SetActive(value);
+        useText.text = text;
+    }
+
+    private void Use()
+    {   
+        currentUseableObject?.Use();
+        ToggleCanvas(false, string.Empty);
     }
 }

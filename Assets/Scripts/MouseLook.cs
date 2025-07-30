@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MouseLook : MonoBehaviour
@@ -7,10 +8,12 @@ public class MouseLook : MonoBehaviour
     [SerializeField] private float sensitivity;
     [SerializeField] private float maxDistance = 100f;
     [SerializeField] private LayerMask hitLayers;
+    [SerializeField] private int changeStep;
     
     private Camera mainCamera;
-    private PickUpObject selectedObject;
-    private PickUpObject currentOutlinedObject;
+    private PickUpObject objectReadyForPickup;
+    private PickUpObject currentlySelectedObject;
+    private readonly List<PickUpObject> pickedUpObjects = new List<PickUpObject>();
     
     private float rotationX;
     private float rotationY;
@@ -26,6 +29,15 @@ public class MouseLook : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             PickUp();
+        }
+
+        if (Input.mouseScrollDelta.y > 0)
+        {
+            ChangeSelectedObject(changeStep);
+        }
+        else if (Input.mouseScrollDelta.y < 0)
+        {
+            ChangeSelectedObject(-changeStep);
         }
         
         float mouseX = Input.GetAxis("Mouse X");
@@ -43,11 +55,12 @@ public class MouseLook : MonoBehaviour
         {
             if (hit.transform.TryGetComponent(out PickUpObject pickUpObject))
             {
-                if (currentOutlinedObject == pickUpObject) return;
+                if (objectReadyForPickup == pickUpObject) return;
                 
                 ClearOutline();
-                currentOutlinedObject = pickUpObject;
-                currentOutlinedObject.OutlineObject(true);
+                
+                objectReadyForPickup = pickUpObject;
+                objectReadyForPickup.OutlineObject(true);
             }
         }
         else
@@ -58,25 +71,37 @@ public class MouseLook : MonoBehaviour
 
     private void ClearOutline()
     {
-        if (!currentOutlinedObject) return;
+        if (!objectReadyForPickup) return;
         
-        currentOutlinedObject.OutlineObject(false);
-        currentOutlinedObject = null;
+        objectReadyForPickup.OutlineObject(false);
+        objectReadyForPickup = null;
     }
 
     private void PickUp()
     {
-        if (!currentOutlinedObject) return;
+        if (!objectReadyForPickup) return;
+
+        objectReadyForPickup.PickUp(playerTransform);
+
+        if (currentlySelectedObject) currentlySelectedObject.gameObject.SetActive(false);
         
-        currentOutlinedObject.PickUp(playerTransform);
-        selectedObject = currentOutlinedObject;
+        currentlySelectedObject = objectReadyForPickup;
+        pickedUpObjects.Add(objectReadyForPickup);
         ClearOutline();
     }
 
-    private void Use()
+    private void ChangeSelectedObject(int step)
     {
-        if (!selectedObject) return;
+        if (pickedUpObjects.Count <= 0 || !currentlySelectedObject) return;
         
-        selectedObject.Use();
+        int currentIndex = pickedUpObjects.IndexOf(currentlySelectedObject);
+        int length = pickedUpObjects.Count;
+        int index = (currentIndex + step  + length) % length;
+
+        if (currentlySelectedObject) currentlySelectedObject.gameObject.SetActive(false);
+        
+        currentlySelectedObject = pickedUpObjects[index];
+
+        if (currentlySelectedObject) currentlySelectedObject.gameObject.SetActive(true);
     }
 }
