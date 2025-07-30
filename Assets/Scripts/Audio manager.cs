@@ -11,7 +11,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip level2Music;
     [SerializeField] private AudioClip level3Music;
 
-    private AudioSource audioSource;
+    [SerializeField] private AudioSource musicAudioSource;
+    [SerializeField] private AudioSource SFXAudioSource;
 
     private void Awake()
     {
@@ -24,7 +25,6 @@ public class AudioManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -64,16 +64,26 @@ public class AudioManager : MonoBehaviour
 
     public void ChangeVolume(float volume)
     {
-        audioSource.volume = volume;
+        musicAudioSource.volume = volume;
+    }
+
+    public void ChangeSFXVolume(float volume)
+    {
+        SFXAudioSource.volume = volume;
     }
 
     private void PlayMusic(AudioClip clip)
     {
-        if (clip == null || audioSource == null) return;
+        if (clip == null || musicAudioSource == null) return;
 
-        audioSource.Stop();
-        audioSource.clip = clip;
-        audioSource.loop = true;
-        audioSource.Play();
+        musicAudioSource.Stop();
+        musicAudioSource.clip = clip;
+        musicAudioSource.loop = true;
+        musicAudioSource.Play();
+    }
+
+    private void PlaySFXMusic(AudioClip clip)
+    {
+        SFXAudioSource.PlayOneShot(clip);
     }
 }
