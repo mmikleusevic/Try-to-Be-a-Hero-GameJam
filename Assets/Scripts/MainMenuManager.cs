@@ -20,8 +20,6 @@ public class MainMenuManager : MonoBehaviour
     private void Start()
     {
         InitializePanels();
-
-
     }
 
     private void InitializePanels()
@@ -34,6 +32,7 @@ public class MainMenuManager : MonoBehaviour
     public void PlayGame()
     {
         mainMenuPanel.SetActive(false);
+        LevelManager.Instance.LoadScene(Scenes.Level1);
        // gamePanel.SetActive(true);
       //  gameManager.InitializeGame();
     }
@@ -59,5 +58,6 @@ public class MainMenuManager : MonoBehaviour
     public void OnVolumeChanged()
     {
         volumeText.text = $"{Mathf.Round(volumeSlider.value * 100)}%";
+        AudioManager.Instance.ChangeVolume(volumeSlider.value);
     }
 }
