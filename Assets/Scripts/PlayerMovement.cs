@@ -46,9 +46,14 @@ public class PlayerMovement : MonoBehaviour
             playerRigidbody.AddForce(jumpForce, ForceMode.Impulse);
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            
+            speed *= 2;
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            speed /= 2;
         }
     }
 
@@ -76,10 +81,5 @@ public class PlayerMovement : MonoBehaviour
             groundLayer,
             QueryTriggerInteraction.Ignore
         );
-    }
-
-    private void PickUp()
-    {
-        
     }
 }
