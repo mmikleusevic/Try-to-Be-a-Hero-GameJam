@@ -5,16 +5,16 @@ using UnityEngine;
 public class Door : MonoBehaviour, IUseable
 {
     [SerializeField] private Quaternion endRotation;
-
-    [SerializeField] private string useText;
     [SerializeField] private float duration;
     
+    private readonly string useText = "Press E to open the door";
     private Quaternion startRotation;
     private bool isOpen;
 
     private void Start()
     {
         startRotation = transform.rotation;
+        endRotation *= startRotation;
     }
 
     public void Use()
@@ -30,18 +30,25 @@ public class Door : MonoBehaviour, IUseable
         while (timer < duration)
         {
             timer += Time.deltaTime;
-            float elapsed =  timer / duration;
+            float elapsed = Mathf.Clamp01(timer / duration);
             
-            transform.rotation = Quaternion.Lerp(startRotation, endRotation, elapsed);
+            transform.rotation = Quaternion.Slerp(startRotation, endRotation, elapsed);
             
             yield return null;
         }
-        
         transform.rotation = endRotation;
         isOpen = true;
     }
 
     private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.TryGetComponent(out PlayerMovement playerMovement) && !isOpen)
+        {
+            playerMovement.SetUseableObject(this, useText);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject.TryGetComponent(out PlayerMovement playerMovement) && !isOpen)
         {
