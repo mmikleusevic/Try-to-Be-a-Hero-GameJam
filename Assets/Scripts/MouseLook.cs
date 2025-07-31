@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
+    private const string PUNCH = "Punch";
+    
+    [SerializeField] private Animator playerAnimator;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private float sensitivity;
     [SerializeField] private float maxDistance = 100f;
     [SerializeField] private LayerMask hitLayers;
     [SerializeField] private int changeStep;
+    [SerializeField] private Brother brother;
+    [SerializeField] private float damage;
     
     private Camera mainCamera;
     private PickUpObject objectReadyForPickup;
@@ -38,6 +43,11 @@ public class MouseLook : MonoBehaviour
         else if (Input.mouseScrollDelta.y < 0)
         {
             ChangeSelectedObject(-changeStep);
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Punch();
         }
         
         float mouseX = Input.GetAxis("Mouse X");
@@ -103,5 +113,25 @@ public class MouseLook : MonoBehaviour
         currentlySelectedObject = pickedUpObjects[index];
 
         if (currentlySelectedObject) currentlySelectedObject.gameObject.SetActive(true);
+    }
+
+    private void Punch()
+    {
+        playerAnimator.Play(PUNCH, -1, 0f);
+
+        if (!brother) return;
+        
+        float distance = Vector3.Distance(transform.position, brother.transform.position);
+        if (distance < 3)
+        {
+            brother.TakeDamage(damage);
+        }
+    }
+    
+    public bool CheckForKey()
+    {
+        if (currentlySelectedObject.name == "Key") return true;
+        
+        return false;
     }
 }
