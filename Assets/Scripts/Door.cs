@@ -6,9 +6,11 @@ public class Door : MonoBehaviour, IUseable
 {
     [SerializeField] private Quaternion endRotation;
     [SerializeField] private float duration;
+    [SerializeField] private bool needsKey = false;
     
     private readonly string useText = "Press E to open the door";
     private Quaternion startRotation;
+    private bool playerHasKey = false;
     private bool isOpen;
 
     private void Start()
@@ -19,7 +21,7 @@ public class Door : MonoBehaviour, IUseable
 
     public void Use()
     {
-        if (isOpen) return;
+        if (isOpen || !playerHasKey) return;
         
         StartCoroutine(Rotate());
     }
@@ -46,6 +48,11 @@ public class Door : MonoBehaviour, IUseable
         {
             playerMovement.SetUseableObject(this, useText);
         }
+
+        if (other.gameObject.TryGetComponent(out MouseLook mouseLook))
+        {
+            playerHasKey = mouseLook.CheckForKey();
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -53,6 +60,11 @@ public class Door : MonoBehaviour, IUseable
         if (other.gameObject.TryGetComponent(out PlayerMovement playerMovement) && !isOpen)
         {
             playerMovement.SetUseableObject(this, useText);
+        }
+        
+        if (other.gameObject.TryGetComponent(out MouseLook mouseLook))
+        {
+            playerHasKey = mouseLook.CheckForKey();
         }
     }
 

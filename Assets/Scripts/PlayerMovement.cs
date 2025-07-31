@@ -5,9 +5,13 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private const string VELOCITY_X = "VelocityX";
+    private const string VELOCITY_Z= "VelocityZ";
+    
     [SerializeField] private float speed;
     [SerializeField] private Vector3 jumpForce;
     [SerializeField] private TextMeshProUGUI useText;
+    [SerializeField] private Animator playerAnimator;
     
     private Rigidbody playerRigidbody;
     public Transform groundCheckOrigin;
@@ -26,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         direction = Vector3.zero;
-        
+        playerAnimator.StopPlayback();
         if (Input.GetKey(KeyCode.W))
         {
             direction += transform.forward;
@@ -68,6 +72,10 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         Vector3 normalizedDirection = direction.normalized;
+        Vector3 localDirection = transform.InverseTransformDirection(normalizedDirection);
+        
+        playerAnimator.SetFloat(VELOCITY_X, localDirection.x);
+        playerAnimator.SetFloat(VELOCITY_Z, localDirection.z);
         
         playerRigidbody.linearVelocity = 
             new Vector3(normalizedDirection.x * speed, playerRigidbody.linearVelocity.y, normalizedDirection.z * speed);
