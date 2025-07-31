@@ -15,8 +15,9 @@ public class MainMenuManager : MonoBehaviour
 
     [SerializeField] private Slider volumeSlider;
     [SerializeField] private TMP_Text volumeText;
+
     
-    
+
     private void Start()
     {
         InitializePanels();
@@ -60,4 +61,6 @@ public class MainMenuManager : MonoBehaviour
         volumeText.text = $"{Mathf.Round(volumeSlider.value * 100)}%";
         AudioManager.Instance.ChangeVolume(volumeSlider.value);
     }
+
+   
 }

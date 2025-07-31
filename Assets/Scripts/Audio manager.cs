@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
-    
+
     [SerializeField] private AudioClip mainMenuMusic;
     [SerializeField] private AudioClip level1Music;
     [SerializeField] private AudioClip level2Music;
@@ -48,11 +48,11 @@ public class AudioManager : MonoBehaviour
         {
             PlayMusic(mainMenuMusic);
         }
-        else if (scene.name == "Level1") 
+        else if (scene.name == "Level1")
         {
             PlayMusic(level1Music);
         }
-        else if (scene.name == "Level2") 
+        else if (scene.name == "Level2")
         {
             PlayMusic(level2Music);
         }
@@ -84,6 +84,8 @@ public class AudioManager : MonoBehaviour
 
     private void PlaySFXMusic(AudioClip clip)
     {
+       
         SFXAudioSource.PlayOneShot(clip);
+    
     }
 }
