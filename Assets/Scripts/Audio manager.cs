@@ -6,6 +6,7 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
+    
     [SerializeField] private AudioClip mainMenuMusic;
     [SerializeField] private AudioClip level1Music;
     [SerializeField] private AudioClip level2Music;
@@ -13,6 +14,8 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private AudioSource musicAudioSource;
     [SerializeField] private AudioSource SFXAudioSource;
+
+    public AudioClip[] SFXClips;
 
     private void Awake()
     {
@@ -84,7 +87,7 @@ public class AudioManager : MonoBehaviour
 
     private void PlaySFXMusic(AudioClip clip)
     {
-       
+
         SFXAudioSource.PlayOneShot(clip);
     
     }

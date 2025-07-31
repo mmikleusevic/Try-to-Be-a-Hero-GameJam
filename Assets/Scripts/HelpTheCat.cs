@@ -5,7 +5,7 @@ using UnityEngine;
 public class HelpTheCat : MonoBehaviour
 {
     [SerializeField] private TMP_Text catText;
-    [TextArea][SerializeField] private string fullText = "Go see if the cat needs your help";
+    [TextArea][SerializeField] private string fullText;
     [SerializeField] private float typingSpeed = 0.05f;
     [SerializeField] private float startDelay = 5f;
     [SerializeField] private float hideText = 5f;
