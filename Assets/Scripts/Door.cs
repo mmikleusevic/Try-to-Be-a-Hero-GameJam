@@ -5,12 +5,12 @@ using UnityEngine;
 public class Door : MonoBehaviour, IUseable
 {
     [SerializeField] private Quaternion endRotation;
+    [SerializeField] private bool needsKey;
     [SerializeField] private float duration;
-    [SerializeField] private bool needsKey = false;
     
-    private readonly string useText = "Press E to open the door";
     private Quaternion startRotation;
-    private bool playerHasKey = false;
+    private readonly string useText = "Press E to open the door";
+    private bool playerHasKey;
     private bool isOpen;
 
     private void Start()
@@ -19,9 +19,14 @@ public class Door : MonoBehaviour, IUseable
         endRotation *= startRotation;
     }
 
-    public void Use()
+    public void Use(MouseLook mouseLook)
     {
-        if (isOpen || !playerHasKey) return;
+        if (isOpen || !playerHasKey && needsKey) return;
+
+        if (needsKey && mouseLook)
+        {
+            mouseLook.DestroySelectedObject();
+        }
         
         StartCoroutine(Rotate());
     }
@@ -44,27 +49,27 @@ public class Door : MonoBehaviour, IUseable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out PlayerMovement playerMovement) && !isOpen)
+        if (other.gameObject.TryGetComponent(out PlayerMovement playerMovement) && !isOpen || playerHasKey && needsKey && !isOpen)
         {
+            if (!playerMovement) return;
             playerMovement.SetUseableObject(this, useText);
         }
-
-        if (other.gameObject.TryGetComponent(out MouseLook mouseLook))
+        if (other.gameObject.TryGetComponent(out MouseLook mouseLook) && !isOpen && needsKey)
         {
-            playerHasKey = mouseLook.CheckForKey();
+            playerHasKey = mouseLook.DoesPlayerHaveTheKey();
         }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out PlayerMovement playerMovement) && !isOpen)
+        if (other.gameObject.TryGetComponent(out PlayerMovement playerMovement) && !isOpen || playerHasKey && needsKey && !isOpen)
         {
+            if (!playerMovement) return;
             playerMovement.SetUseableObject(this, useText);
         }
-        
-        if (other.gameObject.TryGetComponent(out MouseLook mouseLook))
+        if (other.gameObject.TryGetComponent(out MouseLook mouseLook) && !isOpen)
         {
-            playerHasKey = mouseLook.CheckForKey();
+            playerHasKey = mouseLook.DoesPlayerHaveTheKey();
         }
     }
 

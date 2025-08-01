@@ -106,7 +106,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_Height: 1.5
   m_Direction: 1
   m_Center: {x: 0, y: 0.75, z: 0}
@@ -691,6 +691,7 @@ GameObject:
   - component: {fileID: 1798913886780580114}
   - component: {fileID: 4611492227590318745}
   - component: {fileID: 3250490305844244854}
+  - component: {fileID: 3852678597817413512}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -828,6 +829,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48ec980a5037c5547b54cb85a9eabeb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerAnimator: {fileID: 1344660944712274127}
   playerTransform: {fileID: 3355984724874631297}
   sensitivity: 2
   maxDistance: 5
@@ -835,6 +837,27 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   changeStep: 1
+--- !u!65 &3852678597817413512
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7776254769152569254}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.1, y: 0.1, z: 0.1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8043507873702817063
 GameObject:
   m_ObjectHideFlags: 0

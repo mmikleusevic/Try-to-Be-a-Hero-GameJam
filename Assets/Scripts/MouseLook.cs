@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class MouseLook : MonoBehaviour
 {
     private const string PUNCH = "Punch";
     
+    [SerializeField] private float damage = 20f;
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private float sensitivity;
@@ -13,7 +15,7 @@ public class MouseLook : MonoBehaviour
     [SerializeField] private LayerMask hitLayers;
     [SerializeField] private int changeStep;
     [SerializeField] private Brother brother;
-    [SerializeField] private float damage;
+    [SerializeField] private AudioClip punchSound;
     
     private Camera mainCamera;
     private PickUpObject objectReadyForPickup;
@@ -22,6 +24,7 @@ public class MouseLook : MonoBehaviour
     
     private float rotationX;
     private float rotationY;
+    private bool isPunching;
 
     private void Start()
     {
@@ -44,10 +47,12 @@ public class MouseLook : MonoBehaviour
         {
             ChangeSelectedObject(-changeStep);
         }
-
+        
         if (Input.GetMouseButtonDown(0))
         {
-            Punch();
+            if (isPunching) return;
+            playerAnimator.Play(PUNCH, -1, 0f);
+            StartCoroutine(Punch());
         }
         
         float mouseX = Input.GetAxis("Mouse X");
@@ -96,6 +101,12 @@ public class MouseLook : MonoBehaviour
         if (currentlySelectedObject) currentlySelectedObject.gameObject.SetActive(false);
         
         currentlySelectedObject = objectReadyForPickup;
+
+        if (currentlySelectedObject.TryGetComponent(out Collider objectCollider))
+        {
+            objectCollider.enabled = false;
+        }
+        
         pickedUpObjects.Add(objectReadyForPickup);
         ClearOutline();
     }
@@ -115,23 +126,41 @@ public class MouseLook : MonoBehaviour
         if (currentlySelectedObject) currentlySelectedObject.gameObject.SetActive(true);
     }
 
-    private void Punch()
+    public bool DoesPlayerHaveTheKey()
     {
-        playerAnimator.Play(PUNCH, -1, 0f);
+        if (!currentlySelectedObject) return false;
+        if (currentlySelectedObject.name != "Key") return false;
+            
+        return true;
+    }
 
-        if (!brother) return;
-        
-        float distance = Vector3.Distance(transform.position, brother.transform.position);
-        if (distance < 3)
+    public void DestroySelectedObject()
+    {
+        if (currentlySelectedObject.name == "Key")
         {
-            brother.TakeDamage(damage);
+            pickedUpObjects.Remove(currentlySelectedObject);
+            Destroy(currentlySelectedObject.gameObject);
         }
     }
-    
-    public bool CheckForKey()
+
+    public PickUpObject GetCurrentlySelectedObject()
     {
-        if (currentlySelectedObject.name == "Key") return true;
+        return currentlySelectedObject;
+    }
+
+    private IEnumerator Punch()
+    {
+        if (!brother) yield break;
         
-        return false;
+        isPunching = true;
+        float distance = Vector3.Distance(playerTransform.position, brother.transform.position);
+        if (distance < 3f)
+        {
+            brother.TakeDamage(damage);
+            AudioManager.Instance.PlaySFXMusic(punchSound);
+        }
+
+        yield return new WaitForSeconds(1f);
+        isPunching = false;
     }
 }

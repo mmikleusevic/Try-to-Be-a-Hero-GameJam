@@ -10,8 +10,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip level1Music;
     [SerializeField] private AudioClip level2Music;
     [SerializeField] private AudioClip level3Music;
-
-    private AudioSource audioSource;
+    [SerializeField] private AudioClip endGameMusic;
+    [SerializeField] private AudioSource musicAudioSource;
+    [SerializeField] private AudioSource SFXAudioSource;
 
     private void Awake()
     {
@@ -24,7 +25,6 @@ public class AudioManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -48,11 +48,11 @@ public class AudioManager : MonoBehaviour
         {
             PlayMusic(mainMenuMusic);
         }
-        else if (scene.name == "Level1") 
+        else if (scene.name == "Level1")
         {
             PlayMusic(level1Music);
         }
-        else if (scene.name == "Level2") 
+        else if (scene.name == "Level2")
         {
             PlayMusic(level2Music);
         }
@@ -60,20 +60,50 @@ public class AudioManager : MonoBehaviour
         {
             PlayMusic(level3Music);
         }
+        else if(scene.name == "End")
+        {
+            PlayMusic(endGameMusic);    
+        }
     }
 
     public void ChangeVolume(float volume)
     {
-        audioSource.volume = volume;
+        musicAudioSource.volume = volume;
+    }
+
+    public void ChangeSFXVolume(float volume)
+    {
+        SFXAudioSource.volume = volume;
+    }
+
+    public float GetSFXVolume()
+    {
+        return SFXAudioSource.volume;
+    }
+    
+    public float GetMusicVolume()
+    {
+        return musicAudioSource.volume;
     }
 
     private void PlayMusic(AudioClip clip)
     {
-        if (clip == null || audioSource == null) return;
+        if (clip == null || musicAudioSource == null) return;
 
-        audioSource.Stop();
-        audioSource.clip = clip;
-        audioSource.loop = true;
-        audioSource.Play();
+        musicAudioSource.volume = GetMusicVolume();
+        musicAudioSource.Stop();
+        musicAudioSource.clip = clip;
+        musicAudioSource.loop = true;
+        musicAudioSource.Play();
+    }
+
+    public void PlaySFXMusic(AudioClip clip)
+    {
+        SFXAudioSource.PlayOneShot(clip);
+    }
+
+    public void StopSFXMusic()
+    {
+        SFXAudioSource.Stop();
     }
 }
