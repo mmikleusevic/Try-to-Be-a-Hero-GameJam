@@ -42,6 +42,7 @@ public class Pause : MonoBehaviour
     public void BackToMainMenu()
     {
         LevelManager.Instance.LoadScene(Scenes.MainMenu);
+        Time.timeScale = 1f;
     }
 
     public void ExitGame()
